@@ -14,6 +14,7 @@ import {
   getDocuments,
   addDocument,
   updateDocument,
+  deleteDocument,
   getTransactions,
   updateTransaction,
   replaceTransactions,
@@ -198,6 +199,16 @@ export default function DashboardPage() {
       estimatedDeductible: Math.round(totalDeductible * 100) / 100,
       estimatedTaxSavings: Math.round(estimatedSavings * 100) / 100,
     });
+  }
+
+  function handleDelete(docId: string) {
+    deleteDocument(docId);
+    setExtractingIds((prev) => {
+      const next = new Set(prev);
+      next.delete(docId);
+      return next;
+    });
+    refreshAll();
   }
 
   function handleMatch(docId: string) {
@@ -466,6 +477,17 @@ export default function DashboardPage() {
                               </p>
                             </div>
                             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(doc.id)}
+                                className="shrink-0 p-1.5 rounded border border-transparent text-tm-gray hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors"
+                                title="Delete"
+                                aria-label="Delete"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
                               <button
                                 onClick={() => handleExtractAI(doc)}
                                 disabled={extractingIds.has(doc.id)}

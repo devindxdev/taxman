@@ -82,6 +82,18 @@ export function getDocument(id: string): Document | undefined {
   return getDocuments().find((d) => d.id === id);
 }
 
+export function deleteDocument(id: string): void {
+  const docs = getDocuments().filter((d) => d.id !== id);
+  setDocuments(docs);
+  const txns = getTransactions();
+  const updated = txns.map((t) =>
+    t.matched_document_id === id ? { ...t, matched_document_id: null as string | null } : t
+  );
+  if (updated.some((t, i) => t.matched_document_id !== txns[i].matched_document_id)) {
+    setTransactions(updated);
+  }
+}
+
 export function getTransactions(): Transaction[] {
   if (typeof window === "undefined") return [];
   try {
